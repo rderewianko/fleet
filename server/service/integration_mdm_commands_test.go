@@ -141,14 +141,14 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeMacOS() {
 	s.DoJSON("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusOK, &wipeResp)
 	require.Equal(t, fleet.PendingActionWipe, wipeResp.PendingAction)
 	require.Equal(t, fleet.DeviceStatusUnlocked, wipeResp.DeviceStatus)
-	wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), 0)
+	wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), 0)
 
 	// try to wipe the host again, already have it pending
 	res = s.DoRaw("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusUnprocessableEntity)
 	errMsg = extractServerErrorText(res.Body)
 	require.Contains(t, errMsg, "Host has pending wipe request.")
 	// no activity created
-	s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), wipeActID)
+	s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), wipeActID)
 
 	// refresh the host's status, it is unlocked, pending wipe
 	s.DoJSON("GET", fmt.Sprintf("/api/latest/fleet/hosts/%d", host.ID), nil, http.StatusOK, &getHostResp)
@@ -183,7 +183,7 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeMacOS() {
 	// try to wipe the host again, conflict (already wiped)
 	s.Do("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusConflict)
 	// no activity created
-	s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), wipeActID)
+	s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), wipeActID)
 
 	// re-enroll the host, simulating that another user received the wiped host
 	err = mdmClient.Enroll()
@@ -718,14 +718,14 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeIOSIpadOS() {
 			s.DoJSON("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", tc.host.ID), nil, http.StatusOK, &wipeResp)
 			require.Equal(t, fleet.PendingActionWipe, wipeResp.PendingAction)
 			require.Equal(t, fleet.DeviceStatusUnlocked, wipeResp.DeviceStatus)
-			wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, tc.host.ID, tc.host.DisplayName()), 0)
+			wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, tc.host.ID, tc.host.DisplayName(), tc.host.FleetPlatform()), 0)
 
 			// try to wipe the host again, already have it pending
 			res = s.DoRaw("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", tc.host.ID), nil, http.StatusUnprocessableEntity)
 			errMsg = extractServerErrorText(res.Body)
 			require.Contains(t, errMsg, "Host has pending wipe request.")
 			// no activity created
-			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, tc.host.ID, tc.host.DisplayName()), wipeActID)
+			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, tc.host.ID, tc.host.DisplayName(), tc.host.FleetPlatform()), wipeActID)
 
 			// refresh the host's status, it is unlocked, pending wipe
 			s.DoJSON("GET", fmt.Sprintf("/api/latest/fleet/hosts/%d", tc.host.ID), nil, http.StatusOK, &getHostResp)
@@ -760,7 +760,7 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeIOSIpadOS() {
 			// try to wipe the host again, conflict (already wiped)
 			s.Do("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", tc.host.ID), nil, http.StatusConflict)
 			// no activity created
-			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, tc.host.ID, tc.host.DisplayName()), wipeActID)
+			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, tc.host.ID, tc.host.DisplayName(), tc.host.FleetPlatform()), wipeActID)
 
 			// re-enroll the host, simulating that another user received the wiped host
 			err = tc.mdmClient.Enroll()
@@ -927,14 +927,14 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeWindowsLinux() {
 			s.DoJSON("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusOK, &wipeResp)
 			require.Equal(t, fleet.PendingActionWipe, wipeResp.PendingAction)
 			require.Equal(t, fleet.DeviceStatusUnlocked, wipeResp.DeviceStatus)
-			wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), 0)
+			wipeActID := s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), 0)
 
 			// try to wipe the host again, already have it pending
 			res = s.DoRaw("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusUnprocessableEntity)
 			errMsg = extractServerErrorText(res.Body)
 			require.Contains(t, errMsg, "Host has pending wipe request.")
 			// no activity created
-			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), wipeActID)
+			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), wipeActID)
 
 			// refresh the host's status, it is unlocked, pending wipe
 			s.DoJSON("GET", fmt.Sprintf("/api/latest/fleet/hosts/%d", host.ID), nil, http.StatusOK, &getHostResp)
@@ -999,7 +999,7 @@ func (s *integrationMDMTestSuite) TestLockUnlockWipeWindowsLinux() {
 			// try to wipe the host again, conflict (already wiped)
 			s.Do("POST", fmt.Sprintf("/api/latest/fleet/hosts/%d/wipe", host.ID), nil, http.StatusConflict)
 			// no activity created
-			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q}`, host.ID, host.DisplayName()), wipeActID)
+			s.lastActivityOfTypeMatches(fleet.ActivityTypeWipedHost{}.ActivityName(), fmt.Sprintf(`{"host_id": %d, "host_display_name": %q, "host_platform": %q}`, host.ID, host.DisplayName(), host.FleetPlatform()), wipeActID)
 
 			// re-enroll the host, simulating that another user received the wiped host
 			newOrbitKey := uuid.New().String()

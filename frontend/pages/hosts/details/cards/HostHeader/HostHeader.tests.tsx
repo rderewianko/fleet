@@ -138,4 +138,30 @@ describe("HostHeader", () => {
 
     expect(await screen.findByText(/Host is locked/i)).toBeInTheDocument();
   });
+
+  it("does not render wipe status tags for Linux hosts", () => {
+    const linuxSummaryData = { ...defaultSummaryData, platform: "ubuntu" };
+
+    const { rerender } = render(
+      <HostHeader
+        summaryData={linuxSummaryData}
+        showRefetchSpinner={false}
+        onRefetchHost={jest.fn()}
+        renderActionsDropdown={renderActionDropdown}
+        hostMdmDeviceStatus={"wiping" as HostMdmDeviceStatusUIState}
+      />
+    );
+    expect(screen.queryByText("Wipe pending")).not.toBeInTheDocument();
+
+    rerender(
+      <HostHeader
+        summaryData={linuxSummaryData}
+        showRefetchSpinner={false}
+        onRefetchHost={jest.fn()}
+        renderActionsDropdown={renderActionDropdown}
+        hostMdmDeviceStatus={"wiped" as HostMdmDeviceStatusUIState}
+      />
+    );
+    expect(screen.queryByText("Wiped")).not.toBeInTheDocument();
+  });
 });

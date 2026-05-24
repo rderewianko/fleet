@@ -911,6 +911,7 @@ func (a ActivityTypeUnlockedHost) HostIDs() []uint {
 type ActivityTypeWipedHost struct {
 	HostID          uint   `json:"host_id"`
 	HostDisplayName string `json:"host_display_name"`
+	HostPlatform    string `json:"host_platform"`
 }
 
 func (a ActivityTypeWipedHost) ActivityName() string {
@@ -924,6 +925,7 @@ func (a ActivityTypeWipedHost) HostIDs() []uint {
 type ActivityTypeWipeFailedHost struct {
 	HostID          uint   `json:"host_id"`
 	HostDisplayName string `json:"host_display_name"`
+	HostPlatform    string `json:"host_platform"`
 }
 
 func (a ActivityTypeWipeFailedHost) ActivityName() string {
