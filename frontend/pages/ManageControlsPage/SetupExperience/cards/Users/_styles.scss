@@ -1,9 +1,13 @@
 .setup-experience-users {
   @include vertical-card-layout;
 
-  gap: $gap-page-component-inner;
+  gap: $gap-page-component;
 
   &__section-description {
     margin: 0;
+  }
+
+  .form-field--checkbox {
+    gap: $pad-xsmall;
   }
 }
