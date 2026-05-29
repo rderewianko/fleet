@@ -15,8 +15,9 @@ Create a new SAML app in Okta:
 
 ![Example Okta IdP Configuration](https://raw.githubusercontent.com/fleetdm/fleet/main/docs/images/okta-idp-setup.png)
 
-If you're configuring [end user authentication](https://fleetdm.com/guides/setup-experience#end-user-authentication), use `https://<your_fleet_url>/api/v1/fleet/mdm/sso/callback` for the **Single sign on URL** instead.
-
+Depending on which connection you're configuring the Sign On URL is one the following:
+- **Fleet Users** use `https://<your_fleet_url>/api/v1/fleet/sso/callback`
+- **[End User](https://fleetdm.com/guides/setup-experience#end-user-authentication)** use `https://<your_fleet_url>/api/v1/fleet/mdm/sso/callback`
 > Note that while setting up the SAML app in Okta, the Entity ID is called "Audience URI (SP Entity ID)", but after the app is set up, Okta labels this as "Audience Restriction".
 
 Once configured, you will need to retrieve the Identity Provider metadata URL either from **View Setup Instructions** from the **Identity Provider metadata** link within the application **Sign on** settings, or under the **SAML 2.0** section under **Metadata details**.
@@ -115,8 +116,9 @@ Fleet can be configured to use authentik as an identity provider. To continue, y
     - For **Name**, enter "Fleet".
     - For **Authorization flow**, choose `default-provider-authorization-implicit-consent (Authorize Application)`.
     - In the **Protocol settings** section, configure the following:
-      - For **Assertion Consumer Service URL** use `https://<your_fleet_url>/api/v1/fleet/sso/callback`.
-        - If you're configuring **[end user authentication](https://fleetdm.com/guides/setup-experience#end-user-authentication)**, use `https://<your_fleet_url>/api/v1/fleet/mdm/sso/callback`.
+      - Depending on which connection you're configuring **Assertion Consumer Service URL** is one of the following
+		- **Fleet Users** use `https://<your_fleet_url>/api/v1/fleet/sso/callback`
+		- **[End User](https://fleetdm.com/guides/setup-experience#end-user-authentication)** use `https://<your_fleet_url>/api/v1/fleet/mdm/sso/callback`
       - For **Issuer**, use `authentik`.
       - For **Service Provider Binding**, choose `Post`.
       - For **audience**, use `https://<your_fleet_url>`.
